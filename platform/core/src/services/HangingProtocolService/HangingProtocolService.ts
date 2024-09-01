@@ -249,6 +249,8 @@ export default class HangingProtocolService extends PubSubService {
    *    becomes more stateless.
    */
   public getMatchDetails(): HangingProtocol.HangingProtocolMatchDetails {
+    // 打印 viewportMatchDetails
+    // 打印 displaySetMatchDetails
     return {
       viewportMatchDetails: this.viewportMatchDetails,
       displaySetMatchDetails: this.displaySetMatchDetails,
@@ -394,11 +396,39 @@ export default class HangingProtocolService extends PubSubService {
    *        the studies to display in viewports.
    * @param protocol is a specific protocol to apply.
    */
-  public run({ studies, displaySets, activeStudy }, protocolId) {
+  public run(params, protocolId) {
+    const { studies, displaySets, activeStudy } = params;
+
+    // 現在你可以訪問原始的 `params` 物件
+    console.log('原始Studies:', JSON.parse(JSON.stringify(studies)));
+    console.log('原始displaySets:', JSON.parse(JSON.stringify(displaySets)));
+    console.log('原始activeStudy:', JSON.parse(JSON.stringify(activeStudy)));
+
+    console.log('原始物件:', JSON.parse(JSON.stringify(params)));
+
     this.studies = [...(studies || this.studies)];
     this.displaySets = displaySets;
     this.setActiveStudyUID((activeStudy || studies[0])?.StudyInstanceUID);
 
+    // 這裡假設 displaySets 是一個陣列，且已經有兩個元素。
+    if (this.displaySets && this.displaySets.length > 1) {
+      // 訪問索引為 1 的顯示集
+      const displaySet = this.displaySets[1];
+
+      // 修改 SOPClassUID
+      displaySet.SOPClassUID = '1.2.840.10008.5.1.4.1.1.66.4';
+      displaySet.SOPClassHandlerId =
+        '@ohif/extension-cornerstone-dicom-seg.sopClassHandlerModule.dicom-seg';
+
+      displaySet.Modality = 'SEG';
+      // 保存回 this.displaySets 中
+      this.displaySets[1] = displaySet;
+
+      // 你可以在這裡打印以確認修改是否成功
+      console.log('Updated displaySets:', this.displaySets);
+    }
+
+    //////
     this.protocolEngine = new ProtocolEngine(
       this.getProtocols(),
       this.customAttributeRetrievalCallbacks

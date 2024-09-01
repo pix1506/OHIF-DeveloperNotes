@@ -33,14 +33,24 @@ const ThumbnailNoImage = ({
   const [lastTap, setLastTap] = useState(0);
 
   const handleTouchEnd = e => {
+    console.log('handleTouchEnd called'); // 确认这个函数被调用
     const currentTime = new Date().getTime();
     const tapLength = currentTime - lastTap;
     if (tapLength < 300 && tapLength > 0) {
-      onDoubleClick(e);
+      console.log('Double tap detected');
+      handleDoubleClick(e);
     } else {
+      console.log('Single tap detected');
       onClick(e);
     }
     setLastTap(currentTime);
+  };
+
+  const handleDoubleClick = e => {
+    console.log('onDoubleClick triggered');
+
+    // 其他逻辑
+    onDoubleClick(e);
   };
 
   return (
@@ -54,7 +64,7 @@ const ThumbnailNoImage = ({
       }}
       id={`thumbnail-${displaySetInstanceUID}`}
       onClick={onClick}
-      onDoubleClick={onDoubleClick}
+      onDoubleClick={handleDoubleClick}
       onTouchEnd={handleTouchEnd}
       role="button"
       tabIndex="0"
@@ -76,7 +86,7 @@ const ThumbnailNoImage = ({
             >
               <div
                 className={classnames(
-                  'rounded-sm px-3  text-lg',
+                  'rounded-sm px-3 text-lg',
                   isHydratedForDerivedDisplaySet
                     ? 'bg-primary-light text-black'
                     : 'bg-primary-main text-white'
@@ -85,7 +95,7 @@ const ThumbnailNoImage = ({
                 {modality}
               </div>
             </Tooltip>
-            <span className="ml-4 text-base text-blue-300">{seriesDate}</span>
+
             <DisplaySetMessageListTooltip
               messages={messages}
               id={`display-set-tooltip-${displaySetInstanceUID}`}

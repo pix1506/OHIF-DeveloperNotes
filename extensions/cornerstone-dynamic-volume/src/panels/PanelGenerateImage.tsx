@@ -152,7 +152,12 @@ export default function PanelGenerateImage({ servicesManager, commandsManager }:
     scalarData.set(dataInTime);
 
     // If computed display set does not exist, create an object to be used as
-    // the displaySet. If it does exist, update the image data and vtkTexture
+    // the displaySet. If it does exist, update the image data and vtkTextur
+
+    if (computedDisplaySet) {
+      console.log('computedDisplaySet already exists, updating volume data...', computedDisplaySet);
+    }
+
     if (!computedDisplaySet) {
       const displaySet = {
         volumeLoaderSchema: computedVolume.volumeId.split(':')[0],
@@ -168,8 +173,10 @@ export default function PanelGenerateImage({ servicesManager, commandsManager }:
         isDerived: true,
       };
       setComputedDisplaySet(displaySet);
+      console.log('Created computedDisplaySet:', displaySet);
       renderGeneratedImage(displaySet);
     } else {
+      console.log('computedDisplaySet already exists, updating volume data...', computedDisplaySet);
       commandsManager.runCommand('updateVolumeData', {
         volume: computedVolume,
       });

@@ -24,10 +24,7 @@ const Thumbnail = ({
   isActive,
   onClick,
   onDoubleClick,
-}): React.ReactNode => {
-  // TODO: We should wrap our thumbnail to create a "DraggableThumbnail", as
-  // this will still allow for "drag", even if there is no drop target for the
-  // specified item.
+}) => {
   const [collectedProps, drag, dragPreview] = useDrag({
     type: 'displayset',
     item: { ...dragData },
@@ -47,6 +44,18 @@ const Thumbnail = ({
       onClick(e);
     }
     setLastTap(currentTime);
+  };
+
+  const handleFileChange = event => {
+    const file = event.target.files[0];
+    if (file) {
+      console.log('Selected file:', file);
+      // 在这里添加您的文件处理逻辑，例如上传文件或读取文件内容
+    }
+  };
+
+  const handleButtonClick = () => {
+    document.getElementById(`file-input-${displaySetInstanceUID}`).click();
   };
 
   return (
@@ -95,10 +104,8 @@ const Thumbnail = ({
             />
             {` ${numInstances}`}
           </div>
-          <div className="flex mr-2 last:mr-0">
-            {loadingProgress && loadingProgress < 1 && (
-              <>{Math.round(loadingProgress * 100)}%</>
-            )}
+          <div className="mr-2 flex last:mr-0">
+            {loadingProgress && loadingProgress < 1 && <>{Math.round(loadingProgress * 100)}%</>}
             {loadingProgress && loadingProgress === 1 && (
               <Icon
                 name={'database'}
@@ -112,6 +119,15 @@ const Thumbnail = ({
           />
         </div>
         <div className="break-all text-base text-white">{description}</div>
+      </div>
+      <div className="mt-4 flex flex-1 items-center justify-center bg-red-500">
+        <button onClick={handleButtonClick}>Upload File</button>
+        <input
+          type="file"
+          id={`file-input-${displaySetInstanceUID}`}
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
       </div>
     </div>
   );

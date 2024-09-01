@@ -16,7 +16,6 @@ function _getDisplaySetsFromSeries(
   extensionManager
 ) {
   const instance = instances[0];
-  console.log('instance:', JSON.parse(JSON.stringify(instance)));
 
   const {
     StudyInstanceUID,
@@ -30,6 +29,8 @@ function _getDisplaySetsFromSeries(
     wadoUri,
     wadoUriRoot,
   } = instance;
+
+  console.log('instance:', JSON.parse(JSON.stringify(instance)));
 
   const displaySet = {
     Modality: 'SEG',

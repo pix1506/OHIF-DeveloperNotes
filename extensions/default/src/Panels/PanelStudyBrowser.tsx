@@ -38,14 +38,35 @@ function PanelStudyBrowser({
   const onDoubleClickThumbnailHandler = displaySetInstanceUID => {
     let updatedViewports = [];
     const viewportId = activeViewportId;
+
+    // Log before the try block
+    console.log('Before try block');
+    console.log('displaySetInstanceUID:', displaySetInstanceUID);
+    console.log('viewportId:', viewportId);
+    ///
+    console.log('e04 displaysetinstanceUID:', JSON.parse(JSON.stringify(displaySetInstanceUID)));
+    console.log(
+      'e04 isHangingProtocolLayout:',
+      JSON.parse(JSON.stringify(isHangingProtocolLayout))
+    );
+    console.log('e04 isHangingProtocolLayout:', JSON.parse(JSON.stringify(viewportId)));
+
     try {
+      // Log before calling getViewportsRequireUpdate
+      console.log('Before getViewportsRequireUpdate call');
+
       updatedViewports = hangingProtocolService.getViewportsRequireUpdate(
         viewportId,
         displaySetInstanceUID,
         isHangingProtocolLayout
       );
+
+      // Log after calling getViewportsRequireUpdate
+      console.log('After getViewportsRequireUpdate call');
     } catch (error) {
+      // Log the error
       console.warn(error);
+      console.log('Error caught in catch block:', error);
       uiNotificationService.show({
         title: 'Thumbnail Double Click',
         message: 'The selected display sets could not be added to the viewport.',
@@ -54,6 +75,8 @@ function PanelStudyBrowser({
       });
     }
 
+    // Log after the try-catch block
+    console.log('After try-catch block');
     viewportGridService.setDisplaySetsForViewports(updatedViewports);
   };
 

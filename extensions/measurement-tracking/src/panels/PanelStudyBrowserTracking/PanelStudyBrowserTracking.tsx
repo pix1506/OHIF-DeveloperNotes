@@ -51,6 +51,7 @@ function PanelStudyBrowserTracking({
   const onDoubleClickThumbnailHandler = displaySetInstanceUID => {
     let updatedViewports = [];
     const viewportId = activeViewportId;
+    console.log(displaySetInstanceUID);
     try {
       updatedViewports = hangingProtocolService.getViewportsRequireUpdate(
         viewportId,

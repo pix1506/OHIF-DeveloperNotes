@@ -39,6 +39,7 @@ async function convertDICOMToJSON(studyDirectory, urlPrefix, outputPath) {
     for (const file of files) {
       if (!file.includes('.DS_Store') && !file.includes('.xml')) {
         const arrayBuffer = await fs.readFile(file);
+        console.log('file',file)
         const dicomDict = dcmjs.data.DicomMessage.readFile(arrayBuffer.buffer);
         const instance = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomDict.dict);
 

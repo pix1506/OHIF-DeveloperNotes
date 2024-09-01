@@ -20,6 +20,9 @@ import { Types as ohifTypes } from '@ohif/core';
 import { easeInOutBell, reverseEaseInOutBell } from '../../utils/transitions';
 import { Segment, Segmentation, SegmentationConfig } from './SegmentationServiceTypes';
 import { mapROIContoursToRTStructData } from './RTSTRUCT/mapROIContoursToRTStructData';
+import { segmentIndex } from '@cornerstonejs/tools/dist/types/stateManagement/segmentation';
+import { set } from 'lodash';
+import de from 'platform/i18n/src/locales/de';
 
 const LABELMAP = csToolsEnums.SegmentationRepresentations.Labelmap;
 const CONTOUR = csToolsEnums.SegmentationRepresentations.Contour;
@@ -321,7 +324,6 @@ class SegmentationService extends PubSubService {
     toolGroupId?: string
   ): void => {
     const segmentation = this.getSegmentation(segmentationId);
-
     if (segmentation === undefined) {
       throw new Error(`no segmentation for segmentationId: ${segmentationId}`);
     }
@@ -382,6 +384,7 @@ class SegmentationService extends PubSubService {
    */
   public getSegmentations(filterNonHydratedSegmentations = true): Segmentation[] {
     const segmentations = this._getSegmentations();
+    console.log(segmentations);
 
     return (
       segmentations &&
@@ -440,6 +443,9 @@ class SegmentationService extends PubSubService {
       });
 
       if (!suppressEvents) {
+        console.log('Broadcasting SEGMENTATION_UPDATED event:', {
+          segmentation: cachedSegmentation,
+        });
         this._broadcastEvent(this.EVENTS.SEGMENTATION_UPDATED, {
           segmentation: cachedSegmentation,
         });
@@ -480,6 +486,9 @@ class SegmentationService extends PubSubService {
     });
 
     if (!suppressEvents) {
+      console.log('Broadcasting SEGMENTATION_ADDED event:', {
+        segmentation: cachedSegmentation,
+      });
       this._broadcastEvent(this.EVENTS.SEGMENTATION_ADDED, {
         segmentation: cachedSegmentation,
       });
@@ -495,6 +504,9 @@ class SegmentationService extends PubSubService {
   ): Promise<string> {
     // Todo: we only support creating labelmap for SEG displaySets for now
     const representationType = LABELMAP;
+    console.log('一開始createSEG的 segDisplayet:', JSON.parse(JSON.stringify(segDisplaySet)));
+
+    console.log('完整SEGDisplayset的樣子', segDisplaySet);
 
     segmentationId = segmentationId ?? segDisplaySet.displaySetInstanceUID;
 
@@ -549,16 +561,147 @@ class SegmentationService extends PubSubService {
         sharedArrayBuffer: window.SharedArrayBuffer,
       },
     });
+    console.log('derivedVolume', derivedVolume);
     const derivedVolumeScalarData = derivedVolume.getScalarData();
-
-    const segmentsInfo = segDisplaySet.segMetadata.data;
+    console.log(derivedVolumeScalarData.length);
     derivedVolumeScalarData.set(new Uint8Array(labelmapBufferArray[0]));
+
+    // 將標量數據中的所有值設置為 5
+    const referenceData = {
+      2000200: 2,
+      2000201: 2,
+      2000202: 2,
+      2000203: 0,
+      2000204: 0,
+      2000205: 0,
+      2000206: 2,
+      2000207: 2,
+      2000208: 2,
+      2000209: 1,
+      2000210: 1,
+      2000211: 1,
+      2000212: 1,
+      2000213: 2,
+      2000214: 2,
+      2000215: 2,
+      2000216: 2,
+      2000217: 2,
+      2000218: 1,
+      2000219: 1,
+      2000220: 1,
+      2000221: 1,
+      2000222: 1,
+      2000223: 1,
+      2000224: 1,
+      2000225: 1,
+      2000226: 1,
+      2000227: 1,
+      2000228: 1,
+      2000229: 1,
+      2000230: 1,
+      2000231: 1,
+      2000232: 1,
+      2000233: 1,
+      2000234: 1,
+      2000235: 1,
+      2000236: 1,
+      2000237: 1,
+      2000238: 1,
+      2000239: 1,
+      2000240: 2,
+      2000241: 2,
+      2000242: 2,
+      2000243: 2,
+      2000244: 0,
+      2000245: 0,
+      2000246: 0,
+      2000247: 2,
+      2000248: 2,
+      2000249: 2,
+      2000250: 2,
+      2000251: 0,
+      2000252: 0,
+      2000253: 0,
+      2000254: 0,
+      2000255: 0,
+      2000256: 0,
+      2000257: 0,
+      2000258: 0,
+      2000259: 0,
+      2000260: 0,
+      2000261: 2,
+      2000262: 2,
+      2000263: 2,
+      2000264: 2,
+      2000265: 1,
+      2000266: 1,
+      2000267: 1,
+      2000268: 1,
+      2000269: 1,
+      2000270: 2,
+      2000271: 2,
+      2000272: 2,
+      2000273: 2,
+      2000274: 2,
+      2000275: 2,
+      2000276: 1,
+      2000277: 1,
+      2000278: 1,
+      2000279: 1,
+      2000280: 1,
+      2000281: 1,
+      2000282: 1,
+      2000283: 1,
+      2000284: 1,
+      2000285: 1,
+      2000286: 1,
+      2000287: 1,
+      2000288: 1,
+      2000289: 1,
+      2000290: 1,
+      2000291: 1,
+      2000292: 1,
+      2000293: 2,
+      2000294: 2,
+      2000295: 2,
+      2000296: 2,
+      2000297: 2,
+      2000298: 2,
+      2000299: 2,
+    };
+
+    for (let i = 4000200; i <= 4000299; i++) {
+      const referenceIndex = i - 2000000;
+      derivedVolumeScalarData[i] = referenceData[referenceIndex];
+    }
+
+    //將從第 3001 個到最後一個元素設置為 14000'
+    /*
+    for (let i = 3001; i < derivedVolumeScalarData.length; i++) {
+      derivedVolumeScalarData[i] = 14000;
+    }
+    */
+    console.log('修改後的標量數據', derivedVolumeScalarData);
+
+    // 確保不會覆蓋之前設置的數據
+    const segmentsInfo = segDisplaySet.segMetadata.data;
+    //labelmapBufferArray.Uint8Array = derivedVolumeScalarData;
+    // 這句斷開derivervolumescarlardata就不會變成set裡的uint8array，後面derivevolume就會用全5展示
+    //derivedVolumeScalarData.set(new Uint8Array(labelmapBufferArray[0]));
+
+    /*這段超重要!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+    ///可以改分割段資料的地方
+    segmentsInfo.forEach(segmentInfo => {
+      if (segmentInfo && segmentInfo.SegmentNumber === 1) {
+        segmentInfo.rgba = [255, 165, 0, 255]; // 橘色
+      }
+    });
 
     segmentation.segments = segmentsInfo.map((segmentInfo, segmentIndex) => {
       if (segmentIndex === 0) {
         return;
       }
-
       const {
         SegmentedPropertyCategoryCodeSequence,
         SegmentNumber,
@@ -571,7 +714,6 @@ class SegmentationService extends PubSubService {
 
       const { x, y, z } = segDisplaySet.centroids.get(segmentIndex) || { x: 0, y: 0, z: 0 };
       const centerWorld = derivedVolume.imageData.indexToWorld([x, y, z]);
-
       segmentation.cachedStats = {
         ...segmentation.cachedStats,
         segmentCenter: {
@@ -588,7 +730,7 @@ class SegmentationService extends PubSubService {
 
       return {
         label: SegmentLabel || `Segment ${SegmentNumber}`,
-        segmentIndex: Number(SegmentNumber),
+        segmentIndex: Number(SegmentNumber), /// segment的數量
         category: SegmentedPropertyCategoryCodeSequence
           ? SegmentedPropertyCategoryCodeSequence.CodeMeaning
           : '',
@@ -615,6 +757,8 @@ class SegmentationService extends PubSubService {
 
     return this.addOrUpdateSegmentation(segmentation, suppressEvents);
   }
+  /*這段超重要!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
   public async createSegmentationForRTDisplaySet(
     rtDisplaySet,
@@ -626,6 +770,7 @@ class SegmentationService extends PubSubService {
     const representationType = CONTOUR;
     segmentationId = segmentationId ?? rtDisplaySet.displaySetInstanceUID;
     const { structureSet } = rtDisplaySet;
+    console.log('rtDisplaySet', rtDisplaySet);
 
     if (!structureSet) {
       throw new Error(
@@ -691,6 +836,8 @@ class SegmentationService extends PubSubService {
         });
 
         const contourSet = geometry.data;
+        console.log('contourSet', contourSet);
+        console.log('rtDisplaySet', rtDisplaySet);
         const centroid = contourSet.getCentroid();
 
         segmentsCachedStats[segmentIndex] = {
@@ -771,8 +918,8 @@ class SegmentationService extends PubSubService {
     const segmentIndices = segmentIndex
       ? [segmentIndex]
       : segmentation.segments
-        .filter(segment => segment?.segmentIndex)
-        .map(segment => segment.segmentIndex);
+          .filter(segment => segment?.segmentIndex)
+          .map(segment => segment.segmentIndex);
 
     const segmentIndicesSet = new Set(segmentIndices);
 
@@ -887,8 +1034,8 @@ class SegmentationService extends PubSubService {
         const { viewport } = getEnabledElementByIds(viewportId, renderingEngineId);
         if (viewport instanceof StackViewport) {
           const { element } = viewport;
-          const index = csUtils.getClosestStackImageIndexForPoint(world, viewport)
-          cstUtils.viewport.jumpToSlice(element, { imageIndex: index })
+          const index = csUtils.getClosestStackImageIndexForPoint(world, viewport);
+          cstUtils.viewport.jumpToSlice(element, { imageIndex: index });
         } else {
           cstUtils.viewport.jumpToWorld(viewport, world);
         }

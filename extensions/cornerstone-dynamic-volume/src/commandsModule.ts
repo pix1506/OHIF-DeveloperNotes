@@ -199,7 +199,6 @@ const commandsModule = ({ commandsManager, servicesManager }: withAppTypes) => {
     },
     swapDynamicWithComputedDisplaySet: ({ displaySet }) => {
       const computedDisplaySet = displaySet;
-
       const displaySetCache = displaySetService.getDisplaySetCache();
       const cachedDisplaySetKeys = [displaySetCache.keys()];
       const { displaySetInstanceUID } = computedDisplaySet;
@@ -207,9 +206,6 @@ const commandsModule = ({ commandsManager, servicesManager }: withAppTypes) => {
       if (!cachedDisplaySetKeys.includes(displaySetInstanceUID)) {
         displaySetCache.set(displaySetInstanceUID, computedDisplaySet);
       }
-
-      // Get all viewports and their corresponding indices
-      const { viewports } = viewportGridService.getState();
 
       // get the viewports in the grid
       // iterate over them and find the ones that are showing a dynamic
