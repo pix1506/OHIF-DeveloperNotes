@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <div align="center">
@@ -334,3 +335,6 @@ MIT © [OHIF](https://github.com/OHIF)
 <!-- prettier-ignore-end -->
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FOHIF%2FViewers.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FOHIF%2FViewers?ref=badge_large)
+=======
+# OHIF
+>>>>>>> 6bf7a7059a38d0b57a3077dfea42ff7ff4f3688e
