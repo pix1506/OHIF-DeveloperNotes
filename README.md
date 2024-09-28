@@ -7,6 +7,6 @@
 
 
 <details>
-<summary>一.分割資料集如何顯示?</summary>
+<summary>一. 分割資料集如何顯示?</summary>
   123
 </details>
